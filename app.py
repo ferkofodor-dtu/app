@@ -71,7 +71,7 @@ def index(image_index=0):
         current_rating = None
     
     # Calculate progress
-    progress = len(rated_images) / total_images * 100
+    progress = round(len(rated_images) / total_images * 100, 2)
     is_goodbye = len(rated_images) == total_images
     print(progress, is_goodbye)
     
