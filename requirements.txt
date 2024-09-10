@@ -57,7 +57,6 @@ prompt-toolkit==3.0.36
 psutil==5.9.4
 pure-eval==0.2.2
 Pygments==2.14.0
-pywin32
 pywinpty==2.0.13
 pyzmq==24.0.1
 referencing==0.35.0
