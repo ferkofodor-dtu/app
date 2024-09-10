@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate the Smile</title>
+    <style>
+        /* Button styling */
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            background-color: #4caf50;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 5px;
+        }
+
+        /* Hover effect for buttons */
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        /* Disabled button style */
+        .button[disabled] {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>Thank you {{ session.username }}!</h1>
+    <h3>Your average smile rating is {{ avg_rating }}, but you surely made mine a 5! :D</h3>
+    <img src="/static/smile_image.jpg" alt="Smile" width="200">
+
+    <p>If you wish to participate in Part 2, or follow-up on the progress, visit https://github.com/ferkofodor-dtu/cognitive_faces.</p>
+    <p>Thanks for getting me closer to graduation!</p>
+    <p>All the best, Ferkó</p>
+    <a href="/logout" class="button">Logout</a>
+</body>
+</html>

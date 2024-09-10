@@ -1,26 +1,20 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
-from flask_migrate import Migrate
 
-# Initialize Migrate
 app = Flask(__name__)
 app.secret_key = 'secret'
 
 # Configure SQLite database
-if os.environ.get('FLASK_ENV') == 'production':
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
-else:
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///local.db'  # For local development
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://ferkofodor:vYbU5PTZtOaIS31IG0NrTIYW4k6g8VAe@dpg-crg3lsaj1k6c739cbolg-a.frankfurt-postgres.render.com/cognitive_faces"
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
-
-migrate = Migrate(app, db)
 
 # Define the database model
 class Rating(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), nullable=False)
+    username = db.Column(db.String(50), nullable=False)
     image_index = db.Column(db.Integer, nullable=False)
     mood = db.Column(db.Integer, nullable=False)
 
@@ -35,9 +29,15 @@ def home():
 @app.route('/set_username', methods=['POST'])
 def set_username():
     username = request.form['username']
+    #check if the user already exists in the database
+    user = Rating.query.filter_by(username=username).first()
+    if user is not None:
+        return redirect('/already_exists')
+    
     if username:
         session['username'] = username
         return redirect('/0')
+    
     return redirect('/')
 
 @app.route('/<int:image_index>')
@@ -61,21 +61,39 @@ def index(image_index=0):
     
     # Get all ratings for the current user
     username = session['username']
+    
     ratings = Rating.query.filter_by(username=username).all()
     rated_images = {rating.image_index for rating in ratings}
+    try:
+        current_rating = Rating.query.filter_by(username=username, image_index=image_index).first()
+        current_rating = current_rating.mood
+    except:
+        current_rating = None
     
     # Calculate progress
     progress = len(rated_images) / total_images * 100
+    is_goodbye = len(rated_images) == total_images
+    print(progress, is_goodbye)
     
-    # Check if the user is on the last image
-    is_last_image = (image_index == total_images - 1)
-    
-    return render_template('index.html', 
+    if is_goodbye:
+        return redirect('/goodbye')
+    else:    
+        return render_template('index.html', 
                            image=current_image, 
                            image_index=image_index, 
                            total_images=total_images, 
                            progress=progress,
-                           is_last_image=is_last_image)
+                           current_rating=current_rating)
+
+@app.route('/goodbye')
+def goodbye():
+    avg_rating = Rating.query.filter_by(username=session['username']).with_entities(db.func.avg(Rating.mood)).scalar()
+    avg_rating = round(avg_rating, 2) if avg_rating else 0
+    return render_template('goodbye.html', avg_rating=avg_rating)
+
+@app.route('/already_exists')
+def already_exists():
+    return render_template('already_exists.html')
 
 @app.route('/rate', methods=['POST'])
 def rate():
@@ -88,8 +106,13 @@ def rate():
     
     # Store the rating in the database
     new_rating = Rating(username=username, image_index=image_index, mood=rating)
-    db.session.add(new_rating)
-    db.session.commit()
+    old_rating = Rating.query.filter_by(username=username, image_index=image_index).first()
+    if old_rating:
+        old_rating.mood = rating
+        db.session.commit()
+    else:
+        db.session.add(new_rating)
+        db.session.commit()
     
     # Redirect to the next image or stay on the last one
     return redirect(f'/{image_index + 1}' if image_index < len(os.listdir('static/images')) - 1 else f'/{image_index}')

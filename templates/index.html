@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rate Faces</title>
+    <title>Rate the Smile</title>
     <style>
         /* Basic styles for the progress bar */
         .progress-bar {
@@ -38,6 +38,10 @@
             margin: 5px;
         }
 
+        .reset-button {
+            background-color: #f44336;
+        }
+
         /* Hover effect for buttons */
         .button:hover {
             background-color: #45a049;
@@ -63,6 +67,12 @@
             {{ progress }}%
         </div>
     </div>
+
+    <!-- Previously Rated Images -->
+    {% if current_rating %}
+        <h3>Image already rated: {{ current_rating }}</h3>
+        <p>Submitting a new rating will overwrite the old one.</p>
+    {% endif %}
 
     <!-- Display Current Image -->
     <img src="{{ image }}" alt="Face" width="300px">
@@ -92,13 +102,11 @@
     </div>
 
     <!-- Reset Button on the last image -->
-    {% if is_last_image %}
     <div style="margin-top: 20px;">
         <form method="POST" action="/reset">
-            <button type="submit" class="button">Reset and Start Over</button>
+            <button type="submit" class="reset-button">Reset and Start Over</button>
         </form>
     </div>
-    {% endif %}
 
 </body>
 </html>
