@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Faces</title>
+    <style>
+        /* Basic styles for the progress bar */
+        .progress-bar {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .progress-bar-fill {
+            height: 25px;
+            background-color: #4caf50;
+            border-radius: 5px;
+            text-align: center;
+            color: white;
+        }
+
+        /* Button styling */
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            background-color: #4caf50;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 5px;
+        }
+
+        /* Hover effect for buttons */
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        /* Disabled button style */
+        .button[disabled] {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <h1>Rate Faces</h1>
+
+    <!-- Username Display -->
+    <p>Logged in as: {{ session.username }}</p>
+    <a href="/logout" class="button">Logout</a>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+        <div class="progress-bar-fill" style="width: {{ progress }}%;">
+            {{ progress }}%
+        </div>
+    </div>
+
+    <!-- Display Current Image -->
+    <img src="{{ image }}" alt="Face" width="300px">
+    
+    <!-- Rating Form -->
+    <form method="POST" action="/rate">
+        <label for="mood">Rate the face:</label>
+        <input type="range" id="mood" name="mood" min="1" max="5">
+        
+        <!-- Hidden input to pass the current image index -->
+        <input type="hidden" name="image_index" value="{{ image_index }}">
+        
+        <button type="submit" class="button">Submit</button>
+    </form>
+    
+    <!-- Navigation Buttons -->
+    <div style="margin-top: 20px;">
+        <a href="/{{ image_index - 1 }}" class="button" 
+           {% if image_index == 0 %}style="visibility: hidden;"{% endif %}>
+            Previous
+        </a>
+        
+        <a href="/{{ image_index + 1 }}" class="button" 
+           {% if image_index == total_images - 1 %}style="visibility: hidden;"{% endif %}>
+            Next
+        </a>
+    </div>
+
+    <!-- Reset Button on the last image -->
+    {% if is_last_image %}
+    <div style="margin-top: 20px;">
+        <form method="POST" action="/reset">
+            <button type="submit" class="button">Reset and Start Over</button>
+        </form>
+    </div>
+    {% endif %}
+
+</body>
+</html>
