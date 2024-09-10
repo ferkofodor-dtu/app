@@ -1,14 +1,17 @@
 from flask import Flask, render_template, request, redirect, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
+from flask_migrate import Migrate
 
+# Initialize Migrate
 app = Flask(__name__)
-app.secret_key = 'some_secret_key'
 
 # Configure SQLite database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ratings.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+migrate = Migrate(app, db)
 
 # Define the database model
 class Rating(db.Model):
