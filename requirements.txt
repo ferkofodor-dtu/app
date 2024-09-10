@@ -78,3 +78,4 @@ wcwidth==0.2.6
 webcolors==1.13
 websocket-client==1.8.0
 Werkzeug==3.0.4
+Flask-Migrate
