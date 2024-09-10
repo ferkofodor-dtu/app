@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 
 # Initialize Migrate
 app = Flask(__name__)
+app.secret_key = 'secret'
 
 # Configure SQLite database
 if os.environ.get('FLASK_ENV') == 'production':

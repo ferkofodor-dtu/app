@@ -1,9 +1,11 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask
 
+# postgresql://ferkofodor:vYbU5PTZtOaIS31IG0NrTIYW4k6g8VAe@dpg-crg3lsaj1k6c739cbolg-a.frankfurt-postgres.render.com/cognitive_faces
+
 # Initialize Flask app and SQLAlchemy
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ratings.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///local.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
