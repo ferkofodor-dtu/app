@@ -8,3 +8,4 @@ Jinja2==3.1.2
 MarkupSafe==2.1.5
 psycopg2-binary==2.9.6
 Werkzeug>=3.0.0
+gunicorn==23.0.0
